@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 
-
 @dataclass
 class DiagnosisResult:
     item: str
@@ -156,7 +155,7 @@ def analyze_disk(usage: float) -> DiagnosisResult:
                 "不要なファイルを削除してください",
                 "ごみ箱を空にしてください",
                 "不要なアプリケーションをアンインストールしてください",
-                "必要に応じて大容量ファイルを別のストレージへ移動してください",
+                "必要に応じて大容量ファイルを別のストレージへ移動してください", 
             ],
         )
 
@@ -185,19 +184,133 @@ def analyze_disk(usage: float) -> DiagnosisResult:
         causes=[],
         recommendations=[],
     )
+    
+    
+def analyze_cpu_temperature(temperature: float) -> DiagnosisResult:
+    """
+    CPU温度を診断する
+    """
+
+    if temperature >= 90:
+        return DiagnosisResult(
+            item="CPU温度",
+            status="警告",
+            value=temperature,
+            message="CPU温度が非常に高い状態です。",
+            causes=[
+                "CPUに高い負荷がかかっている可能性があります",
+                "CPUクーラーの冷却性能が不足している可能性があります",
+                "CPUクーラーやヒートシンクにホコリが蓄積している可能性があります",
+                "PC内部のエアフローが十分でない可能性があります",
+            ],
+            recommendations=[
+                "CPU使用率の高いプロセスを確認してください",
+                "PC内部のホコリを確認してください",
+                "CPUクーラーの動作を確認してください",
+                "PC内部のエアフローを確認してください",
+            ],
+        )
+
+    if temperature >= 80:
+        return DiagnosisResult(
+            item="CPU温度",
+            status="注意",
+            value=temperature,
+            message="CPU温度が高めです。",
+            causes=[
+                "CPUに比較的高い負荷がかかっている可能性があります",
+                "冷却性能が低下している可能性があります",
+            ],
+            recommendations=[
+                "CPU使用率の高いアプリケーションを確認してください",
+                "長時間高温が続く場合は冷却状態を確認してください",
+            ],
+        )
+
+    return DiagnosisResult(
+        item="CPU温度",
+        status="正常",
+        value=temperature,
+        message="CPU温度に問題は見られません。",
+        causes=[],
+        recommendations=[],
+    )
+    
+    
+def analyze_gpu_temperature(temperature: float) -> DiagnosisResult:
+    """
+    GPU温度を診断する
+    """
+
+    if temperature >= 90:
+        return DiagnosisResult(
+            item="GPU温度",
+            status="警告",
+            value=temperature,
+            message="GPU温度が非常に高い状態です。",
+            causes=[
+                "GPUに高い負荷がかかっている可能性があります",
+                "GPUファンやヒートシンクの冷却性能が低下している可能性があります",
+                "GPU周辺のエアフローが十分でない可能性があります",
+            ],
+            recommendations=[
+                "GPU使用率を確認してください",
+                "GPUファンの動作を確認してください",
+                "PC内部のホコリを確認してください",
+                "長時間高温が続く場合は冷却環境を確認してください",
+            ],
+        )
+
+    if temperature >= 80:
+        return DiagnosisResult(
+            item="GPU温度",
+            status="注意",
+            value=temperature,
+            message="GPU温度が高めです。",
+            causes=[
+                "GPUに比較的高い負荷がかかっている可能性があります",
+                "GPUの冷却性能が低下している可能性があります",
+            ],
+            recommendations=[
+                "GPU使用率を確認してください",
+                "長時間高温が続く場合は冷却状態を確認してください",
+            ],
+        )
+
+    return DiagnosisResult(
+        item="GPU温度",
+        status="正常",
+        value=temperature,
+        message="GPU温度に問題は見られません。",
+        causes=[],
+        recommendations=[],
+    )
 
 
 def analyze_system(
     cpu_usage,
     memory_usage,
     disk_usage,
+    cpu_temperature=None,
+    gpu_usage=None,
+    gpu_temperature=None,
     memory_processes=None,
-):  
+):
     results = [
         analyze_cpu(cpu_usage),
         analyze_memory(memory_usage, memory_processes),
         analyze_disk(disk_usage),
     ]
+
+    if cpu_temperature is not None:
+        results.append(
+            analyze_cpu_temperature(cpu_temperature)
+        )
+
+    if gpu_temperature is not None:
+        results.append(
+            analyze_gpu_temperature(gpu_temperature)
+        )
 
     if any(result.status == "警告" for result in results):
         overall_status = "警告"

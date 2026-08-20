@@ -1,34 +1,6 @@
-import platform
-import psutil
-from datetime import datetime
-
 from diagnosis.analyzer import analyze_system
 from diagnosis.process_monitor import get_top_memory_processes
-
-
-def get_system_info():
-    cpu_usage = psutil.cpu_percent(interval=1)
-    memory = psutil.virtual_memory()
-    disk = psutil.disk_usage("C:\\")
-
-    return {
-        "os": platform.system(),
-        "os_version": platform.version(),
-        "machine": platform.machine(),
-        "cpu": platform.processor(),
-        "physical_cores": psutil.cpu_count(logical=False),
-        "logical_cores": psutil.cpu_count(logical=True),
-        "cpu_usage": cpu_usage,
-        "memory_total": memory.total / (1024 ** 3),
-        "memory_used": memory.used / (1024 ** 3),
-        "memory_available": memory.available / (1024 ** 3),
-        "memory_usage": memory.percent,
-        "disk_total": disk.total / (1024 ** 3),
-        "disk_used": disk.used / (1024 ** 3),
-        "disk_free": disk.free / (1024 ** 3),
-        "disk_usage": disk.percent,
-        "boot_time": datetime.fromtimestamp(psutil.boot_time()),
-    }
+from diagnosis.system_info import get_system_info
 
 
 def print_system_info(info):
@@ -47,6 +19,11 @@ def print_system_info(info):
     print(f"Logical Cores   : {info['logical_cores']}")
     print(f"CPU Usage       : {info['cpu_usage']:.1f} %")
 
+    if info["cpu_temperature"] is not None:
+        print(f"CPU Temperature : {info['cpu_temperature']:.1f} °C")
+    else:
+        print("CPU Temperature : 取得できません")
+
     print("\n[Memory]")
     print(f"Total           : {info['memory_total']:.2f} GB")
     print(f"Used            : {info['memory_used']:.2f} GB")
@@ -59,8 +36,21 @@ def print_system_info(info):
     print(f"Free            : {info['disk_free']:.2f} GB")
     print(f"Usage           : {info['disk_usage']:.1f} %")
 
+    print("\n[GPU]")
+    if info["gpu_usage"] is not None:
+        print(f"GPU Usage       : {info['gpu_usage']:.1f} %")
+    else:
+        print("GPU Usage       : 取得できません")
+
+    if info["gpu_temperature"] is not None:
+        print(f"GPU Temperature : {info['gpu_temperature']:.1f} °C")
+    else:
+        print("GPU Temperature : 取得できません")
+
     print("\n[System]")
     print(f"Boot Time       : {info['boot_time']}")
+
+    print("\n" + "=" * 60)
 
 
 def print_diagnosis(overall_status, results):
@@ -73,7 +63,7 @@ def print_diagnosis(overall_status, results):
     for result in results:
         print(f"\n[{result.item}]")
         print(f"判定    : {result.status}")
-        print(f"数値    : {result.value:.1f} %")
+        print(f"数値    : {result.value:.1f}")
         print(f"説明    : {result.message}")
 
         if result.causes:
@@ -84,13 +74,14 @@ def print_diagnosis(overall_status, results):
         if result.recommendations:
             print("\n推奨対策:")
             for index, recommendation in enumerate(
-                result.recommendations, start=1
+                result.recommendations,
+                start=1,
             ):
                 print(f"  {index}. {recommendation}")
 
     print("\n" + "=" * 60)
-    
-    
+
+
 def print_top_memory_processes(processes):
     print("\n" + "=" * 60)
     print("          メモリ使用量の多いプロセス")
@@ -101,27 +92,36 @@ def print_top_memory_processes(processes):
             f"{index}. "
             f"{process['name']} "
             f"(PID: {process['pid']}) "
-            f"{process['memory_mb']:.1f} MB"
+            f"{process['memory_mb']:.1f} MB "
             f"[{process['category']}]"
         )
 
 
 def main():
+    # PC情報を取得
     info = get_system_info()
 
+    # PC基本情報を表示
     print_system_info(info)
 
+    # メモリ使用量の多いプロセスを取得
     processes = get_top_memory_processes(limit=10)
 
+    # プロセス情報を表示
     print_top_memory_processes(processes)
 
+    # PCを診断
     overall_status, results = analyze_system(
         cpu_usage=info["cpu_usage"],
         memory_usage=info["memory_usage"],
         disk_usage=info["disk_usage"],
+        cpu_temperature=info["cpu_temperature"],
+        gpu_usage=info["gpu_usage"],
+        gpu_temperature=info["gpu_temperature"],
         memory_processes=processes,
     )
 
+    # 診断結果を表示
     print_diagnosis(overall_status, results)
 
 

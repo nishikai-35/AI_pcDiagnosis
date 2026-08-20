@@ -1,5 +1,5 @@
 import psutil
-
+import time
 
 WINDOWS_PROCESSES = {
     "memcompression",
@@ -35,6 +35,7 @@ def classify_process(name):
     return "アプリケーション"
 
 
+# メモリー監視
 def get_top_memory_processes(limit=10):
     processes = []
 
@@ -70,6 +71,58 @@ def get_top_memory_processes(limit=10):
 
     processes.sort(
         key=lambda process: process["memory_mb"],
+        reverse=True,
+    )
+
+    return processes[:limit]
+
+
+# CPUプロセス監視
+def get_top_cpu_processes(limit=10):
+    processes = []
+
+    # CPU使用率の測定開始
+    for process in psutil.process_iter(["pid", "name"]):
+        try:
+            process.cpu_percent(None)
+        except (
+            psutil.NoSuchProcess,
+            psutil.AccessDenied,
+            psutil.ZombieProcess,
+        ):
+            continue
+
+    # 1秒間測定
+    time.sleep(1)
+
+    # CPU使用率取得
+    for process in psutil.process_iter(["pid", "name"]):
+        try:
+            cpu_percent = process.cpu_percent(None)
+            name = process.info["name"] or "Unknown"
+
+            # System Idle ProcessはCPU負荷の診断対象から除外
+            if name.lower() == "system idle process":
+                continue
+
+            processes.append(
+                {
+                    "pid": process.info["pid"],
+                    "name": name,
+                    "cpu_percent": cpu_percent,
+                    "category": classify_process(name),
+                }
+            )
+
+        except (
+            psutil.NoSuchProcess,
+            psutil.AccessDenied,
+            psutil.ZombieProcess,
+        ):
+            continue
+
+    processes.sort(
+        key=lambda process: process["cpu_percent"],
         reverse=True,
     )
 
