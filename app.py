@@ -1,6 +1,14 @@
 from diagnosis.analyzer import analyze_system
-from diagnosis.process_monitor import get_top_memory_processes
+from diagnosis.diagnosis_engine import run_diagnosis
+from diagnosis.report.csv_report import export_csv
+from diagnosis.report.html_report import export_html
 from diagnosis.system_info import get_system_info
+from diagnosis.smart_monitor import get_smart_info
+from diagnosis.event_log import get_windows_event_logs
+from diagnosis.process_monitor import (
+    get_top_memory_processes,
+    get_top_cpu_processes,
+)
 
 
 def print_system_info(info):
@@ -53,17 +61,42 @@ def print_system_info(info):
     print("\n" + "=" * 60)
 
 
-def print_diagnosis(overall_status, results):
+def print_diagnosis(diagnosis):
     print("\n" + "=" * 60)
     print("                 診断結果")
     print("=" * 60)
 
-    print(f"\n総合評価：{overall_status}")
+    print(f"\n総合評価：{diagnosis.status}")
+    print(f"総合説明：{diagnosis.message}")
 
-    for result in results:
+    if diagnosis.causes:
+        print("\n主な原因:")
+        for cause in diagnosis.causes:
+            print(f"  - {cause}")
+
+    if diagnosis.recommendations:
+        print("\n総合推奨対策:")
+        for index, recommendation in enumerate(
+            diagnosis.recommendations,
+            start=1,
+        ):
+            print(f"  {index}. {recommendation}")
+
+    print("\n" + "-" * 60)
+    print("                 個別診断")
+    print("-" * 60)
+
+    for result in diagnosis.results:
         print(f"\n[{result.item}]")
         print(f"判定    : {result.status}")
-        print(f"数値    : {result.value:.1f}")
+
+        if isinstance(result.value, (int, float)):
+            print(f"数値    : {result.value:.1f}")
+        elif result.value is not None:
+            print(f"数値    : {result.value}")
+        else:
+            print("数値    : 取得できません")
+
         print(f"説明    : {result.message}")
 
         if result.causes:
@@ -97,6 +130,21 @@ def print_top_memory_processes(processes):
         )
 
 
+def print_top_cpu_processes(processes):
+    print("\n" + "=" * 60)
+    print("          CPU使用率の高いプロセス")
+    print("=" * 60)
+
+    for index, process in enumerate(processes, start=1):
+        print(
+            f"{index}. "
+            f"{process['name']} "
+            f"(PID: {process['pid']}) "
+            f"{process['cpu_percent']:.1f} % "
+            f"[{process['category']}]"
+        )
+
+
 def main():
     # PC情報を取得
     info = get_system_info()
@@ -104,26 +152,51 @@ def main():
     # PC基本情報を表示
     print_system_info(info)
 
-    # メモリ使用量の多いプロセスを取得
-    processes = get_top_memory_processes(limit=10)
+    # メモリ使用量の多いプロセスを取得・表示
+    memory_processes = get_top_memory_processes(limit=10)
+    print_top_memory_processes(memory_processes)
 
-    # プロセス情報を表示
-    print_top_memory_processes(processes)
+    # CPU使用率の高いプロセスを取得・表示
+    cpu_processes = get_top_cpu_processes(limit=10)
+    print_top_cpu_processes(cpu_processes)
+    
+    # SMART情報取得
+    smart_info = get_smart_info()
+    
+    # Windowsイベントログ取得
+    event_logs = get_windows_event_logs()
 
     # PCを診断
-    overall_status, results = analyze_system(
+    results = analyze_system(
         cpu_usage=info["cpu_usage"],
         memory_usage=info["memory_usage"],
         disk_usage=info["disk_usage"],
         cpu_temperature=info["cpu_temperature"],
         gpu_usage=info["gpu_usage"],
         gpu_temperature=info["gpu_temperature"],
-        memory_processes=processes,
+        memory_processes=memory_processes,
+        cpu_processes=cpu_processes,
+        smart_info=smart_info,
+        event_logs=event_logs,
     )
 
-    # 診断結果を表示
-    print_diagnosis(overall_status, results)
+    # 診断エンジンで総合診断
+    diagnosis = run_diagnosis(results)
 
+    # 診断結果を表示
+    print_diagnosis(diagnosis)
+
+    # 診断レポート（csv, html）を出力
+    csv_path = export_csv(diagnosis, "reports")
+    html_path = export_html(diagnosis, "reports")
+
+    print()
+    print("=" * 60)
+    print("レポート出力完了")
+    print("=" * 60)
+    print(f"CSV : {csv_path}")
+    print(f"HTML: {html_path}")
+    print("=" * 60)
 
 if __name__ == "__main__":
     main()

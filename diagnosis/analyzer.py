@@ -1,10 +1,11 @@
 from dataclasses import dataclass
+from diagnosis.event_analyzer import analyze_event_logs
 
 @dataclass
 class DiagnosisResult:
     item: str
     status: str
-    value: float
+    value: float | str | None
     message: str
     causes: list[str]
     recommendations: list[str]
@@ -31,18 +32,57 @@ def get_memory_process_causes(processes, limit=3):
     return causes
 
 
-def analyze_cpu(usage: float) -> DiagnosisResult:
+def get_cpu_process_causes(processes, limit=3):
+    causes = []
+
+    application_processes = [
+        process
+        for process in processes
+        if process.get("category") == "アプリケーション"
+    ]
+
+    significant_processes = [
+        process
+        for process in application_processes
+        if process.get("cpu_percent", 0) >= 10
+    ]
+
+    for process in significant_processes[:limit]:
+        name = process["name"]
+        cpu_percent = process["cpu_percent"]
+
+        causes.append(
+            f"{name} が約{cpu_percent:.1f}%のCPUを使用しています"
+        )
+
+    return causes
+
+
+def analyze_cpu(
+    usage: float,
+    processes=None,
+) -> DiagnosisResult:
+
+    if processes is None:
+        processes = []
+
+    process_causes = get_cpu_process_causes(processes)
+
     if usage >= 95:
+        causes = [
+            "CPU負荷の高いアプリケーションが実行されている可能性があります",
+            "バックグラウンド処理がCPUを大量に使用している可能性があります",
+            "複数のアプリケーションが同時にCPUを使用している可能性があります",
+        ]
+
+        causes.extend(process_causes)
+
         return DiagnosisResult(
             item="CPU",
             status="警告",
             value=usage,
             message="CPU使用率が非常に高い状態です。",
-            causes=[
-                "CPU負荷の高いアプリケーションが実行されている可能性があります",
-                "バックグラウンド処理がCPUを大量に使用している可能性があります",
-                "複数のアプリケーションが同時にCPUを使用している可能性があります",
-            ],
+            causes=causes,
             recommendations=[
                 "タスクマネージャーでCPU使用率の高いプロセスを確認してください",
                 "使用していないアプリケーションを終了してください",
@@ -51,15 +91,19 @@ def analyze_cpu(usage: float) -> DiagnosisResult:
         )
 
     if usage >= 80:
+        causes = [
+            "アプリケーションによる一時的なCPU負荷の可能性があります",
+            "バックグラウンドで処理が実行されている可能性があります",
+        ]
+
+        causes.extend(process_causes)
+
         return DiagnosisResult(
             item="CPU",
             status="注意",
             value=usage,
             message="CPU使用率が高めです。",
-            causes=[
-                "アプリケーションによる一時的なCPU負荷の可能性があります",
-                "バックグラウンドで処理が実行されている可能性があります",
-            ],
+            causes=causes,
             recommendations=[
                 "使用していないアプリケーションを終了してください",
                 "タスクマネージャーでCPU使用率を確認してください",
@@ -287,6 +331,206 @@ def analyze_gpu_temperature(temperature: float) -> DiagnosisResult:
     )
 
 
+def analyze_smart(smart_info) -> DiagnosisResult:
+    """
+    NVMe SSDのSMART情報を診断する
+    """
+
+    # SMART情報を取得できなかった場合
+    if not smart_info:
+        return DiagnosisResult(
+            item="ストレージSMART",
+            status="注意",
+            value=None,
+            message="ストレージのSMART情報を取得できませんでした。",
+            causes=[
+                "SMART情報を取得できない可能性があります",
+                "ストレージまたはドライバがSMART情報へのアクセスを制限している可能性があります",
+            ],
+            recommendations=[
+                "ストレージの接続状態を確認してください",
+                "SMART情報を取得できる環境か確認してください",
+            ],
+        )
+
+    # SMART情報取得
+    health = smart_info.get("health")
+    critical_warning = smart_info.get("critical_warning")
+    temperature = smart_info.get("temperature")
+    available_spare = smart_info.get("available_spare")
+    percentage_used = smart_info.get("percentage_used")
+    media_errors = smart_info.get("media_errors")
+    error_log_entries = smart_info.get("error_log_entries")
+
+    causes = []
+    recommendations = []
+
+    # ==========================================================
+    # 原因・推奨対策
+    # ==========================================================
+
+    # SMART Health FAILED
+    if health is not None and health.upper() == "FAILED":
+        causes.append(
+            "SSDのSMART自己診断で異常が検出されています"
+        )
+
+        recommendations.append(
+            "重要なデータを速やかにバックアップしてください"
+        )
+
+        recommendations.append(
+            "SSDの交換を検討してください"
+        )
+
+    # Critical Warning
+    if critical_warning and critical_warning != "0x00":
+        causes.append(
+            f"NVMe SSDでCritical Warningが検出されています（{critical_warning}）"
+        )
+
+        recommendations.append(
+            "重要なデータをバックアップしてください"
+        )
+
+    # Media Errors
+    if media_errors is not None and media_errors > 0:
+        causes.append(
+            f"メディアエラーが{media_errors:.0f}件検出されています"
+        )
+
+        recommendations.append(
+            "重要なデータをバックアップし、SSDの状態を継続的に確認してください"
+        )
+
+    # Error Log
+    if error_log_entries is not None and error_log_entries > 0:
+        causes.append(
+            f"NVMeエラーログが{error_log_entries:.0f}件記録されています"
+        )
+
+        recommendations.append(
+            "エラーログの増加がないか継続的に確認してください"
+        )
+
+    # Temperature
+    if temperature is not None and temperature >= 80:
+        causes.append(
+            f"SSD温度が{temperature:.0f}℃と高くなっています"
+        )
+
+        recommendations.append(
+            "SSD周辺の冷却状態とPC内部のエアフローを確認してください"
+        )
+
+    elif temperature is not None and temperature >= 70:
+        causes.append(
+            f"SSD温度が{temperature:.0f}℃とやや高めです"
+        )
+
+        recommendations.append(
+            "長時間高温が続く場合はSSDの冷却状態を確認してください"
+        )
+
+    # Available Spare
+    if available_spare is not None and available_spare < 10:
+        causes.append(
+            f"Available Spareが{available_spare:.0f}%まで低下しています"
+        )
+
+        recommendations.append(
+            "SSDの状態を確認し、必要に応じて交換を検討してください"
+        )
+
+    elif available_spare is not None and available_spare < 20:
+        causes.append(
+            f"Available Spareが{available_spare:.0f}%と低下しています"
+        )
+
+        recommendations.append(
+            "SSDの状態を継続的に監視してください"
+        )
+
+    # Percentage Used
+    if percentage_used is not None and percentage_used >= 90:
+        causes.append(
+            f"SSDの推定使用率が{percentage_used:.0f}%に達しています"
+        )
+
+        recommendations.append(
+            "SSDの交換を検討してください"
+        )
+
+    elif percentage_used is not None and percentage_used >= 80:
+        causes.append(
+            f"SSDの推定使用率が{percentage_used:.0f}%と高くなっています"
+        )
+
+        recommendations.append(
+            "SSDの状態を継続的に監視してください"
+        )
+
+    # ==========================================================
+    # 総合判定
+    # ==========================================================
+
+    # 重大な異常
+    if health is not None and health.upper() == "FAILED":
+        status = "警告"
+        message = "NVMe SSDのSMART健康状態がFAILEDです。"
+
+    elif critical_warning and critical_warning != "0x00":
+        status = "警告"
+        message = "NVMe SSDで重大な警告が検出されています。"
+
+    elif media_errors is not None and media_errors > 0:
+        status = "警告"
+        message = "NVMe SSDでメディアエラーが検出されています。"
+
+    elif percentage_used is not None and percentage_used >= 90:
+        status = "警告"
+        message = "NVMe SSDの推定使用率が非常に高くなっています。"
+
+    elif temperature is not None and temperature >= 80:
+        status = "警告"
+        message = "NVMe SSDの温度が非常に高い状態です。"
+
+    elif available_spare is not None and available_spare < 10:
+        status = "警告"
+        message = "NVMe SSDのAvailable Spareが低下しています。"
+
+    # 注意
+    elif percentage_used is not None and percentage_used >= 80:
+        status = "注意"
+        message = "NVMe SSDの推定使用率が高くなっています。"
+
+    elif temperature is not None and temperature >= 70:
+        status = "注意"
+        message = "NVMe SSDの温度がやや高めです。"
+
+    elif available_spare is not None and available_spare < 20:
+        status = "注意"
+        message = "NVMe SSDのAvailable Spareが低下しています。"
+
+    elif error_log_entries is not None and error_log_entries > 0:
+        status = "注意"
+        message = "NVMe SSDにエラーログが記録されています。"
+
+    # 正常
+    else:
+        status = "正常"
+        message = "NVMe SSDの健康状態に問題は見られません。"
+
+    return DiagnosisResult(
+        item="ストレージSMART",
+        status=status,
+        value=percentage_used,
+        message=message,
+        causes=causes,
+        recommendations=recommendations,
+    )
+    
+
 def analyze_system(
     cpu_usage,
     memory_usage,
@@ -295,9 +539,12 @@ def analyze_system(
     gpu_usage=None,
     gpu_temperature=None,
     memory_processes=None,
+    cpu_processes=None,
+    smart_info=None,
+    event_logs=None,
 ):
     results = [
-        analyze_cpu(cpu_usage),
+        analyze_cpu(cpu_usage, cpu_processes),
         analyze_memory(memory_usage, memory_processes),
         analyze_disk(disk_usage),
     ]
@@ -311,6 +558,25 @@ def analyze_system(
         results.append(
             analyze_gpu_temperature(gpu_temperature)
         )
+        
+    if smart_info is not None:
+        results.append(
+            analyze_smart(smart_info)
+        )
+
+    if event_logs is not None:
+        event_result = analyze_event_logs(event_logs)
+    
+        results.append(
+            DiagnosisResult(
+                item="Windowsイベントログ",
+                status=event_result["status"],
+                value=len(event_logs),
+                message=event_result["message"],
+                causes=event_result["causes"],
+                recommendations=event_result["recommendations"],
+            )
+        )
 
     if any(result.status == "警告" for result in results):
         overall_status = "警告"
@@ -319,4 +585,4 @@ def analyze_system(
     else:
         overall_status = "正常"
 
-    return overall_status, results
+    return results
