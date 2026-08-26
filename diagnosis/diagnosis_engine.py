@@ -1,7 +1,5 @@
 from dataclasses import dataclass
-
 from diagnosis.analyzer import DiagnosisResult
-
 
 @dataclass
 class OverallDiagnosis:

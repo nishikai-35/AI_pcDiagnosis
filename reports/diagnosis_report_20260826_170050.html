@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>AI PC Diagnosis Report</title>
+
+<style>
+
+body {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    background: #f5f7fa;
+    color: #333;
+
+    margin: 0;
+    padding: 30px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+}
+
+h1 {
+    margin-bottom: 5px;
+}
+
+.timestamp {
+    color: #666;
+    margin-bottom: 30px;
+}
+
+.card {
+    background: white;
+    border-radius: 10px;
+    padding: 25px;
+    margin-bottom: 20px;
+
+    box-shadow:
+        0 2px 8px rgba(0,0,0,0.08);
+}
+
+.overall {
+    border-left: 6px solid;
+}
+
+.overall.normal {
+    border-color: #28a745;
+}
+
+.overall.caution {
+    border-color: #ffc107;
+}
+
+.overall.warning {
+    border-color: #dc3545;
+}
+
+.status {
+    display: inline-block;
+
+    padding: 4px 10px;
+
+    border-radius: 20px;
+
+    font-weight: bold;
+}
+
+.status.normal {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status.caution {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status.warning {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+
+    text-align: left;
+    vertical-align: top;
+}
+
+th {
+    background: #f0f2f5;
+}
+
+ul {
+    line-height: 1.8;
+}
+
+footer {
+    text-align: center;
+    color: #777;
+    margin-top: 30px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>AI PC Diagnosis</h1>
+
+    <div class="timestamp">
+        診断日時：
+        2026-08-26 17:00:50
+    </div>
+
+    <div class="card overall warning">
+
+        <h2>総合評価</h2>
+
+        <p>
+            <span class="status warning">
+                警告
+            </span>
+        </p>
+
+        <p>
+            PCに注意が必要な問題が検出されています。
+        </p>
+
+    </div>
+
+
+    <div class="card">
+
+        <h2>主な原因</h2>
+
+        <ul>
+            <li>Windowsイベントログで1件のエラーが検出されました</li><li>Windowsイベントログで6件の警告が検出されました</li><li>重要度「高」のイベントが1件検出されました</li><li>重要度「中」のイベントが1件検出されました</li><li>重要度「低」のイベントが5件検出されました</li><li>[重要度:低] DistributedCOMのアクセス許可に関する警告が発生しています（4件）</li><li>[重要度:高] Windowsサービスの応答がタイムアウトしています（1件）</li><li>[重要度:低] Microsoft Edgeの認証処理に関する警告が発生しています（1件）</li><li>[重要度:中] Intel無線LANドライバー関連の警告が発生しています（1件）</li>
+        </ul>
+
+    </div>
+
+
+    <div class="card">
+
+        <h2>総合推奨対策</h2>
+
+        <ul>
+            <li>Windowsイベントログのエラー内容を確認してください</li><li>同じエラーが繰り返し発生していないか確認してください</li><li>重要度の高いイベントを優先して確認してください</li><li>警告が継続的に発生している場合は原因を確認してください</li>
+        </ul>
+
+    </div>
+
+
+    <div class="card">
+
+        <h2>個別診断</h2>
+
+        <table>
+
+            <thead>
+
+                <tr>
+                    <th>項目</th>
+                    <th>判定</th>
+                    <th>数値</th>
+                    <th>説明</th>
+                    <th>原因</th>
+                    <th>推奨対策</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                
+        <tr>
+            <td>CPU</td>
+            <td>
+                <span class="status warning">
+                    正常
+                </span>
+            </td>
+            <td>5.2</td>
+            <td>CPU使用率に問題は見られません。</td>
+            <td></td>
+            <td></td>
+        </tr>
+        
+        <tr>
+            <td>メモリ</td>
+            <td>
+                <span class="status warning">
+                    正常
+                </span>
+            </td>
+            <td>64.0</td>
+            <td>メモリ使用率に大きな問題は見られません。</td>
+            <td></td>
+            <td></td>
+        </tr>
+        
+        <tr>
+            <td>ディスク</td>
+            <td>
+                <span class="status warning">
+                    正常
+                </span>
+            </td>
+            <td>25.4</td>
+            <td>ディスク容量に問題は見られません。</td>
+            <td></td>
+            <td></td>
+        </tr>
+        
+        <tr>
+            <td>CPU温度</td>
+            <td>
+                <span class="status warning">
+                    正常
+                </span>
+            </td>
+            <td>47.0</td>
+            <td>CPU温度に問題は見られません。</td>
+            <td></td>
+            <td></td>
+        </tr>
+        
+        <tr>
+            <td>GPU温度</td>
+            <td>
+                <span class="status warning">
+                    正常
+                </span>
+            </td>
+            <td>45.0</td>
+            <td>GPU温度に問題は見られません。</td>
+            <td></td>
+            <td></td>
+        </tr>
+        
+        <tr>
+            <td>ストレージSMART</td>
+            <td>
+                <span class="status warning">
+                    正常
+                </span>
+            </td>
+            <td>1.0</td>
+            <td>NVMe SSDの健康状態に問題は見られません。</td>
+            <td></td>
+            <td></td>
+        </tr>
+        
+        <tr>
+            <td>Windowsイベントログ</td>
+            <td>
+                <span class="status warning">
+                    警告
+                </span>
+            </td>
+            <td>7</td>
+            <td>Windowsイベントログに重要度の高い問題が検出されています。</td>
+            <td>Windowsイベントログで1件のエラーが検出されました<br>Windowsイベントログで6件の警告が検出されました<br>重要度「高」のイベントが1件検出されました<br>重要度「中」のイベントが1件検出されました<br>重要度「低」のイベントが5件検出されました<br>[重要度:低] DistributedCOMのアクセス許可に関する警告が発生しています（4件）<br>[重要度:高] Windowsサービスの応答がタイムアウトしています（1件）<br>[重要度:低] Microsoft Edgeの認証処理に関する警告が発生しています（1件）<br>[重要度:中] Intel無線LANドライバー関連の警告が発生しています（1件）</td>
+            <td>Windowsイベントログのエラー内容を確認してください<br>同じエラーが繰り返し発生していないか確認してください<br>重要度の高いイベントを優先して確認してください<br>警告が継続的に発生している場合は原因を確認してください</td>
+        </tr>
+        
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <footer>
+
+        AI PC Diagnosis
+
+    </footer>
+
+</div>
+
+</body>
+</html>

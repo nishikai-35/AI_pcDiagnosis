@@ -3,6 +3,33 @@ from datetime import datetime
 from pathlib import Path
 
 
+# CSVの最大保存数
+MAX_CSV_FILES = 10
+
+
+def cleanup_old_csv_files(output_dir):
+    """
+    CSVレポートが最大保存数を超えた場合、
+    古いファイルから削除する。
+    """
+
+    csv_files = sorted(
+        output_dir.glob("diagnosis_report_*.csv"),
+        key=lambda path: path.stat().st_mtime,
+    )
+
+    while len(csv_files) > MAX_CSV_FILES:
+        oldest_file = csv_files.pop(0)
+
+        try:
+            oldest_file.unlink()
+            print(f"古いCSVレポートを削除しました: {oldest_file}")
+
+        except OSError as e:
+            print(f"CSVレポートの削除に失敗しました: {oldest_file}")
+            print(f"エラー: {e}")
+
+
 def export_csv(diagnosis, output_dir="reports"):
     """
     診断結果をCSVファイルとして出力する。
@@ -85,6 +112,9 @@ def export_csv(diagnosis, output_dir="reports"):
                 causes,
                 recommendations,
             ])
+
+    # 古いCSVを整理
+    cleanup_old_csv_files(output_dir)
 
     # 保存したファイルのパスを返す
     return output_path

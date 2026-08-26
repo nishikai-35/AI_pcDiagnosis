@@ -1,10 +1,13 @@
+import argparse
+
 from diagnosis.analyzer import analyze_system
-from diagnosis.diagnosis_engine import run_diagnosis
-from diagnosis.report.csv_report import export_csv
-from diagnosis.report.html_report import export_html
 from diagnosis.system_info import get_system_info
 from diagnosis.smart_monitor import get_smart_info
+from diagnosis.report.csv_report import export_csv
+from diagnosis.diagnosis_engine import run_diagnosis
+from diagnosis.report.html_report import export_html
 from diagnosis.event_log import get_windows_event_logs
+from diagnosis.logger.diagnosis_logger import save_diagnosis_log
 from diagnosis.process_monitor import (
     get_top_memory_processes,
     get_top_cpu_processes,
@@ -145,25 +148,25 @@ def print_top_cpu_processes(processes):
         )
 
 
-def main():
+def run_diagnosis_process():
+    """
+    PC情報を取得して診断を実行し、
+    診断結果をJSONログとして保存する。
+    """
+
     # PC情報を取得
     info = get_system_info()
 
-    # PC基本情報を表示
-    print_system_info(info)
-
-    # メモリ使用量の多いプロセスを取得・表示
+    # メモリ使用量の多いプロセス
     memory_processes = get_top_memory_processes(limit=10)
-    print_top_memory_processes(memory_processes)
 
-    # CPU使用率の高いプロセスを取得・表示
+    # CPU使用率の高いプロセス
     cpu_processes = get_top_cpu_processes(limit=10)
-    print_top_cpu_processes(cpu_processes)
-    
-    # SMART情報取得
+
+    # SMART情報
     smart_info = get_smart_info()
-    
-    # Windowsイベントログ取得
+
+    # Windowsイベントログ
     event_logs = get_windows_event_logs()
 
     # PCを診断
@@ -180,23 +183,69 @@ def main():
         event_logs=event_logs,
     )
 
-    # 診断エンジンで総合診断
+    # 総合診断
     diagnosis = run_diagnosis(results)
+
+    # JSONログ保存
+    log_path = save_diagnosis_log(results)
+
+    return info, memory_processes, cpu_processes, diagnosis, log_path
+
+
+def main(scheduled=False):
+
+    (
+        info,
+        memory_processes,
+        cpu_processes,
+        diagnosis,
+        log_path,
+    ) = run_diagnosis_process()
+
+    # 手動実行時は詳細情報を表示
+    if not scheduled:
+        print_system_info(info)
+        print_top_memory_processes(memory_processes)
+        print_top_cpu_processes(cpu_processes)
 
     # 診断結果を表示
     print_diagnosis(diagnosis)
 
-    # 診断レポート（csv, html）を出力
-    csv_path = export_csv(diagnosis, "reports")
-    html_path = export_html(diagnosis, "reports")
+    # 手動実行時のみCSV / HTMLを出力
+    if not scheduled:
 
-    print()
-    print("=" * 60)
-    print("レポート出力完了")
-    print("=" * 60)
-    print(f"CSV : {csv_path}")
-    print(f"HTML: {html_path}")
-    print("=" * 60)
+        csv_path = export_csv(diagnosis, "reports")
+        html_path = export_html(diagnosis, "reports")
+
+        print()
+        print("=" * 60)
+        print("レポート出力完了")
+        print("=" * 60)
+        print(f"JSON: {log_path}")
+        print(f"CSV : {csv_path}")
+        print(f"HTML: {html_path}")
+        print("=" * 60)
+
+    else:
+
+        print()
+        print("=" * 60)
+        print("定期診断完了")
+        print("=" * 60)
+        print(f"JSON: {log_path}")
+        print("=" * 60)
+
 
 if __name__ == "__main__":
-    main()
+
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument(
+        "--scheduled",
+        action="store_true",
+        help="定期診断モードで実行する",
+    )
+
+    args = parser.parse_args()
+
+    main(scheduled=args.scheduled)

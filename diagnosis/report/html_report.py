@@ -3,6 +3,39 @@ from html import escape
 from pathlib import Path
 
 
+# HTMLの最大保存数
+MAX_HTML_FILES = 10
+
+
+def cleanup_old_html_files(output_dir):
+    """
+    HTMLレポートが最大保存数を超えた場合、
+    古いファイルから削除する。
+    """
+
+    html_files = sorted(
+        output_dir.glob("diagnosis_report_*.html"),
+        key=lambda path: path.stat().st_mtime,
+    )
+
+    while len(html_files) > MAX_HTML_FILES:
+        oldest_file = html_files.pop(0)
+
+        try:
+            oldest_file.unlink()
+            print(
+                f"古いHTMLレポートを削除しました: "
+                f"{oldest_file}"
+            )
+
+        except OSError as e:
+            print(
+                f"HTMLレポートの削除に失敗しました: "
+                f"{oldest_file}"
+            )
+            print(f"エラー: {e}")
+
+
 def export_html(diagnosis, output_dir="reports"):
     """
     診断結果をHTMLファイルとして出力する。
@@ -315,5 +348,8 @@ footer {{
     ) as html_file:
 
         html_file.write(html)
+
+    # 古いHTMLレポートを整理
+    cleanup_old_html_files(output_dir)
 
     return output_path
