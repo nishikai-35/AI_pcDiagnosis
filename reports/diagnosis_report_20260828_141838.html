@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>AI PC Diagnosis Report</title>
+<style>
+body {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    background: #f5f7fa;
+    color: #333;
+
+    margin: 0;
+    padding: 30px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+}
+
+h1 {
+    margin-bottom: 5px;
+}
+
+.timestamp {
+    color: #666;
+    margin-bottom: 30px;
+}
+
+.card {
+    background: white;
+    border-radius: 10px;
+    padding: 25px;
+    margin-bottom: 20px;
+
+    box-shadow:
+        0 2px 8px rgba(0,0,0,0.08);
+}
+
+.overall {
+    border-left: 6px solid;
+}
+
+.overall.normal {
+    border-color: #28a745;
+}
+
+.overall.caution {
+    border-color: #ffc107;
+}
+
+.overall.warning {
+    border-color: #dc3545;
+}
+
+.ai-analysis {
+    border-left: 6px solid #6f42c1;
+}
+
+.ai-analysis h2 {
+    margin-top: 0;
+}
+
+.ai-analysis h3 {
+    margin-top: 20px;
+    margin-bottom: 8px;
+}
+
+.status {
+    display: inline-block;
+
+    padding: 4px 10px;
+
+    border-radius: 20px;
+
+    font-weight: bold;
+}
+
+.status.normal {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status.caution {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status.warning {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+
+    text-align: left;
+    vertical-align: top;
+}
+
+th {
+    background: #f0f2f5;
+}
+
+ul {
+    line-height: 1.8;
+}
+
+footer {
+    text-align: center;
+    color: #777;
+    margin-top: 30px;
+}
+</style>
+
+</head>
+<body>
+<div class="container">
+    <h1>AI PC Diagnosis</h1>
+    <div class="timestamp">
+        診断日時：
+        2026-08-28 14:18:38
+    </div>
+
+    <div class="card overall warning">
+        <h2>総合評価</h2>
+        <p>
+            <span class="status warning">
+                警告
+            </span>
+        </p>
+        <p>
+            PCに注意が必要な問題が検出されています。
+        </p>
+    </div>
+    
+    <div class="card ai-analysis">
+        <h2>AI分析</h2>
+
+        <h3>概要</h3>
+
+        <p>
+            CPU、メモリ、ディスクなどの主要なハードウェア部品の状態は正常ですが、Windowsイベントログにエラーや警告が大量に検出されています。これは、特定のソフトウェアやシステムコンポーネントの動作において、潜在的な不整合や軽微な問題が発生している可能性を示しています。
+        </p>
+
+        <h3>優先度</h3>
+
+        <p>
+            <span class="status warning">
+                警告
+            </span>
+        </p>
+
+        <h3>AI分析による原因</h3>
+
+        <ul>
+            <li>複数のシステムコンポーネントやアプリケーションが動作する過程で、一時的な通信の不整合（DistributedCOM、PnP関連）や、特定の機能（システム復元、WLAN）の実行に関する軽微なエラーが発生している可能性。</li><li>使用されているドライバー（特にIntel無線LANドライバーなど）が、現在のOSバージョンと完全に対応していない、または最新版に更新されていない可能性。</li><li>特定のソフトウェア設定やアクセス権限の関連で、Windows内部のサービス間で警告（例：DistributedCOMのアクセス許可）が生じている可能性。</li>
+        </ul>
+
+        <h3>AI分析による推奨対策</h3>
+
+        <ul>
+            <li>【最優先】検出されたイベントログ（特にエラー）の内容について、具体的な発生日時とメッセージを記録し、必要に応じてマイクロソフトのサポートドキュメントで検索し、原因を特定してください。</li><li>ネットワークや周辺機器を管理するドライバー（例：無線LANドライバー）が、PCメーカーまたは製造元の公式ウェブサイトから最新バージョンに更新されているか確認し、更新を実施してください。</li><li>Windows Updateを実行し、OS全体を最新の状態に保ち、OS側のバグ修正を適用してください。また、セキュリティソフトウェアやシステム復元ポイントの自動実行が繰り返し行われていないか確認してください。</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h2>主な原因</h2>
+        <ul>
+            <li>Windowsイベントログで5件のエラーが検出されました</li><li>Windowsイベントログで15件の警告が検出されました</li><li>重要度「中」のイベントが12件検出されました</li><li>重要度「低」のイベントが8件検出されました</li><li>[重要度:中] Microsoft-Windows-System-Restore (Event ID: 8303)（3件）</li><li>[重要度:低] DistributedCOMのアクセス許可に関する警告が発生しています（7件）</li><li>[重要度:低] Microsoft Edgeの認証処理に関する警告が発生しています（1件）</li><li>[重要度:中] Intel無線LANドライバー関連の警告が発生しています（1件）</li><li>[重要度:中] Microsoft-Windows-Kernel-PnP (Event ID: 219)（1件）</li><li>[重要度:中] Microsoft-Windows-Hyper-V-Hypervisor (Event ID: 167)（1件）</li><li>[重要度:中] Microsoft-Windows-WLAN-AutoConfig (Event ID: 10002)（1件）</li><li>[重要度:中] Microsoft-Windows-DistributedCOM (Event ID: 10010)（5件）</li>
+        </ul>
+    </div>
+
+
+    <div class="card">
+        <h2>総合推奨対策</h2>
+        <ul>
+            <li>Windowsイベントログのエラー内容を確認してください</li><li>同じエラーが繰り返し発生していないか確認してください</li><li>警告が継続的に発生している場合は原因を確認してください</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h2>個別診断</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>項目</th>
+                    <th>判定</th>
+                    <th>数値</th>
+                    <th>説明</th>
+                    <th>原因</th>
+                    <th>推奨対策</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+        <tr>
+            <td>CPU</td>
+            <td>
+                <span class="status normal">
+                    正常
+                </span>
+            </td>
+            <td>0.7</td>
+            <td>CPU使用率に問題は見られません。</td>
+            <td></td>
+            <td></td>
+        </tr>
+        
+        <tr>
+            <td>メモリ</td>
+            <td>
+                <span class="status normal">
+                    正常
+                </span>
+            </td>
+            <td>49.0</td>
+            <td>メモリ使用率に大きな問題は見られません。</td>
+            <td></td>
+            <td></td>
+        </tr>
+        
+        <tr>
+            <td>ディスク</td>
+            <td>
+                <span class="status normal">
+                    正常
+                </span>
+            </td>
+            <td>28.0</td>
+            <td>ディスク容量に問題は見られません。</td>
+            <td></td>
+            <td></td>
+        </tr>
+        
+        <tr>
+            <td>ストレージSMART</td>
+            <td>
+                <span class="status normal">
+                    正常
+                </span>
+            </td>
+            <td>1.0</td>
+            <td>NVMe SSDの健康状態に問題は見られません。</td>
+            <td></td>
+            <td></td>
+        </tr>
+        
+        <tr>
+            <td>Windowsイベントログ</td>
+            <td>
+                <span class="status warning">
+                    警告
+                </span>
+            </td>
+            <td>20</td>
+            <td>Windowsイベントログにエラーが検出されています。</td>
+            <td>Windowsイベントログで5件のエラーが検出されました<br>Windowsイベントログで15件の警告が検出されました<br>重要度「中」のイベントが12件検出されました<br>重要度「低」のイベントが8件検出されました<br>[重要度:中] Microsoft-Windows-System-Restore (Event ID: 8303)（3件）<br>[重要度:低] DistributedCOMのアクセス許可に関する警告が発生しています（7件）<br>[重要度:低] Microsoft Edgeの認証処理に関する警告が発生しています（1件）<br>[重要度:中] Intel無線LANドライバー関連の警告が発生しています（1件）<br>[重要度:中] Microsoft-Windows-Kernel-PnP (Event ID: 219)（1件）<br>[重要度:中] Microsoft-Windows-Hyper-V-Hypervisor (Event ID: 167)（1件）<br>[重要度:中] Microsoft-Windows-WLAN-AutoConfig (Event ID: 10002)（1件）<br>[重要度:中] Microsoft-Windows-DistributedCOM (Event ID: 10010)（5件）</td>
+            <td>Windowsイベントログのエラー内容を確認してください<br>同じエラーが繰り返し発生していないか確認してください<br>警告が継続的に発生している場合は原因を確認してください</td>
+        </tr>
+        
+            </tbody>
+        </table>
+    </div>
+
+
+    <footer>
+        AI PC Diagnosis
+    </footer>
+</div>
+
+</body>
+</html>

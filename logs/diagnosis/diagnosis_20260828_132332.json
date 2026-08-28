@@ -1,0 +1,85 @@
+{
+  "timestamp": "2026-08-28T13:23:32.933275",
+  "results": [
+    {
+      "item": "CPU",
+      "status": "正常",
+      "value": 4.6,
+      "message": "CPU使用率に問題は見られません。",
+      "causes": [],
+      "recommendations": []
+    },
+    {
+      "item": "メモリ",
+      "status": "正常",
+      "value": 46.9,
+      "message": "メモリ使用率に大きな問題は見られません。",
+      "causes": [],
+      "recommendations": []
+    },
+    {
+      "item": "ディスク",
+      "status": "正常",
+      "value": 27.2,
+      "message": "ディスク容量に問題は見られません。",
+      "causes": [],
+      "recommendations": []
+    },
+    {
+      "item": "ストレージSMART",
+      "status": "正常",
+      "value": 1.0,
+      "message": "NVMe SSDの健康状態に問題は見られません。",
+      "causes": [],
+      "recommendations": []
+    },
+    {
+      "item": "Windowsイベントログ",
+      "status": "警告",
+      "value": 20,
+      "message": "Windowsイベントログにエラーが検出されています。",
+      "causes": [
+        "Windowsイベントログで5件のエラーが検出されました",
+        "Windowsイベントログで15件の警告が検出されました",
+        "重要度「中」のイベントが12件検出されました",
+        "重要度「低」のイベントが8件検出されました",
+        "[重要度:中] Microsoft-Windows-System-Restore (Event ID: 8303)（3件）",
+        "[重要度:低] DistributedCOMのアクセス許可に関する警告が発生しています（7件）",
+        "[重要度:低] Microsoft Edgeの認証処理に関する警告が発生しています（1件）",
+        "[重要度:中] Intel無線LANドライバー関連の警告が発生しています（1件）",
+        "[重要度:中] Microsoft-Windows-Kernel-PnP (Event ID: 219)（1件）",
+        "[重要度:中] Microsoft-Windows-Hyper-V-Hypervisor (Event ID: 167)（1件）",
+        "[重要度:中] Microsoft-Windows-WLAN-AutoConfig (Event ID: 10002)（1件）",
+        "[重要度:中] Microsoft-Windows-DistributedCOM (Event ID: 10010)（5件）"
+      ],
+      "recommendations": [
+        "Windowsイベントログのエラー内容を確認してください",
+        "同じエラーが繰り返し発生していないか確認してください",
+        "警告が継続的に発生している場合は原因を確認してください"
+      ]
+    }
+  ],
+  "ai_analysis": {
+    "summary": "AI分析を実行できませんでした。",
+    "priority": "警告",
+    "causes": [
+      "Windowsイベントログで5件のエラーが検出されました",
+      "Windowsイベントログで15件の警告が検出されました",
+      "重要度「中」のイベントが12件検出されました",
+      "重要度「低」のイベントが8件検出されました",
+      "[重要度:中] Microsoft-Windows-System-Restore (Event ID: 8303)（3件）",
+      "[重要度:低] DistributedCOMのアクセス許可に関する警告が発生しています（7件）",
+      "[重要度:低] Microsoft Edgeの認証処理に関する警告が発生しています（1件）",
+      "[重要度:中] Intel無線LANドライバー関連の警告が発生しています（1件）",
+      "[重要度:中] Microsoft-Windows-Kernel-PnP (Event ID: 219)（1件）",
+      "[重要度:中] Microsoft-Windows-Hyper-V-Hypervisor (Event ID: 167)（1件）",
+      "[重要度:中] Microsoft-Windows-WLAN-AutoConfig (Event ID: 10002)（1件）",
+      "[重要度:中] Microsoft-Windows-DistributedCOM (Event ID: 10010)（5件）"
+    ],
+    "recommendations": [
+      "Windowsイベントログのエラー内容を確認してください",
+      "同じエラーが繰り返し発生していないか確認してください",
+      "警告が継続的に発生している場合は原因を確認してください"
+    ]
+  }
+}

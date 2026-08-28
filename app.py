@@ -3,11 +3,12 @@ import argparse
 from diagnosis.analyzer import analyze_system
 from diagnosis.system_info import get_system_info
 from diagnosis.smart_monitor import get_smart_info
-from diagnosis.report.csv_report import export_csv
 from diagnosis.diagnosis_engine import run_diagnosis
 from diagnosis.report.html_report import export_html
 from diagnosis.event_log import get_windows_event_logs
 from diagnosis.logger.diagnosis_logger import save_diagnosis_log
+from diagnosis.ai.ai_analyzer import analyze_with_ai
+
 from diagnosis.process_monitor import (
     get_top_memory_processes,
     get_top_cpu_processes,
@@ -151,7 +152,7 @@ def print_top_cpu_processes(processes):
 def run_diagnosis_process():
     """
     PC情報を取得して診断を実行し、
-    診断結果をJSONログとして保存する。
+    診断結果とAI分析結果をJSONログとして保存する。
     """
 
     # PC情報を取得
@@ -186,10 +187,23 @@ def run_diagnosis_process():
     # 総合診断
     diagnosis = run_diagnosis(results)
 
-    # JSONログ保存
-    log_path = save_diagnosis_log(results)
+    # AI分析
+    ai_analysis = analyze_with_ai(diagnosis)
 
-    return info, memory_processes, cpu_processes, diagnosis, log_path
+    # JSONログ保存
+    log_path = save_diagnosis_log(
+        results,
+        ai_analysis,
+    )
+
+    return (
+        info,
+        memory_processes,
+        cpu_processes,
+        diagnosis,
+        ai_analysis,
+        log_path,
+    )
 
 
 def main(scheduled=False):
@@ -199,8 +213,32 @@ def main(scheduled=False):
         memory_processes,
         cpu_processes,
         diagnosis,
+        ai_analysis,
         log_path,
     ) = run_diagnosis_process()
+    
+    print() 
+    print("=" * 60)
+    print("                 AI分析結果")
+    print("=" * 60)
+    
+    print(f"\n概要:")
+    print(f"  {ai_analysis.summary}")
+    
+    print(f"\n優先度:")
+    print(f"  {ai_analysis.priority}")
+    
+    if ai_analysis.causes:
+        print("\nAI分析による原因:")
+        for cause in ai_analysis.causes:
+            print(f"  - {cause}")
+    
+    if ai_analysis.recommendations:
+        print("\nAI分析による推奨対策:")
+        for recommendation in ai_analysis.recommendations:
+            print(f"  - {recommendation}")
+    
+    print("=" * 60)
 
     # 手動実行時は詳細情報を表示
     if not scheduled:
@@ -211,18 +249,20 @@ def main(scheduled=False):
     # 診断結果を表示
     print_diagnosis(diagnosis)
 
-    # 手動実行時のみCSV / HTMLを出力
+    # 手動実行時のみHTMLを出力
     if not scheduled:
 
-        csv_path = export_csv(diagnosis, "reports")
-        html_path = export_html(diagnosis, "reports")
+        html_path = export_html(
+            diagnosis,
+            ai_analysis,
+            "reports",
+        )
 
         print()
         print("=" * 60)
         print("レポート出力完了")
         print("=" * 60)
         print(f"JSON: {log_path}")
-        print(f"CSV : {csv_path}")
         print(f"HTML: {html_path}")
         print("=" * 60)
 

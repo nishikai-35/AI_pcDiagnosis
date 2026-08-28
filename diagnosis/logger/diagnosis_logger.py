@@ -33,7 +33,7 @@ def cleanup_old_logs():
             print(f"エラー: {e}")
 
 
-def save_diagnosis_log(results):
+def save_diagnosis_log(results, ai_analysis=None):
     """
     DiagnosisResultの一覧をJSONログとして保存する。
 
@@ -58,6 +58,14 @@ def save_diagnosis_log(results):
             for result in results
         ],
     }
+    
+    if ai_analysis is not None:
+        data["ai_analysis"] = {
+            "summary": ai_analysis.summary,
+            "priority": ai_analysis.priority,
+            "causes": ai_analysis.causes,
+            "recommendations": ai_analysis.recommendations,
+        }
 
     with open(log_path, "w", encoding="utf-8") as f:
         json.dump(

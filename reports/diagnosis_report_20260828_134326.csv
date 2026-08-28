@@ -1,0 +1,28 @@
+﻿総合評価,警告
+総合説明,PCに注意が必要な問題が検出されています。
+
+主な原因
+Windowsイベントログで5件のエラーが検出されました
+Windowsイベントログで15件の警告が検出されました
+重要度「中」のイベントが12件検出されました
+重要度「低」のイベントが8件検出されました
+[重要度:中] Microsoft-Windows-System-Restore (Event ID: 8303)（3件）
+[重要度:低] DistributedCOMのアクセス許可に関する警告が発生しています（7件）
+[重要度:低] Microsoft Edgeの認証処理に関する警告が発生しています（1件）
+[重要度:中] Intel無線LANドライバー関連の警告が発生しています（1件）
+[重要度:中] Microsoft-Windows-Kernel-PnP (Event ID: 219)（1件）
+[重要度:中] Microsoft-Windows-Hyper-V-Hypervisor (Event ID: 167)（1件）
+[重要度:中] Microsoft-Windows-WLAN-AutoConfig (Event ID: 10002)（1件）
+[重要度:中] Microsoft-Windows-DistributedCOM (Event ID: 10010)（5件）
+
+総合推奨対策
+Windowsイベントログのエラー内容を確認してください
+同じエラーが繰り返し発生していないか確認してください
+警告が継続的に発生している場合は原因を確認してください
+
+項目,判定,数値,説明,原因,推奨対策
+CPU,正常,1.7,CPU使用率に問題は見られません。,,
+メモリ,正常,50.4,メモリ使用率に大きな問題は見られません。,,
+ディスク,正常,27.9,ディスク容量に問題は見られません。,,
+ストレージSMART,正常,1.0,NVMe SSDの健康状態に問題は見られません。,,
+Windowsイベントログ,警告,20,Windowsイベントログにエラーが検出されています。,Windowsイベントログで5件のエラーが検出されました / Windowsイベントログで15件の警告が検出されました / 重要度「中」のイベントが12件検出されました / 重要度「低」のイベントが8件検出されました / [重要度:中] Microsoft-Windows-System-Restore (Event ID: 8303)（3件） / [重要度:低] DistributedCOMのアクセス許可に関する警告が発生しています（7件） / [重要度:低] Microsoft Edgeの認証処理に関する警告が発生しています（1件） / [重要度:中] Intel無線LANドライバー関連の警告が発生しています（1件） / [重要度:中] Microsoft-Windows-Kernel-PnP (Event ID: 219)（1件） / [重要度:中] Microsoft-Windows-Hyper-V-Hypervisor (Event ID: 167)（1件） / [重要度:中] Microsoft-Windows-WLAN-AutoConfig (Event ID: 10002)（1件） / [重要度:中] Microsoft-Windows-DistributedCOM (Event ID: 10010)（5件）,Windowsイベントログのエラー内容を確認してください / 同じエラーが繰り返し発生していないか確認してください / 警告が継続的に発生している場合は原因を確認してください
