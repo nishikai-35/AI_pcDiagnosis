@@ -1,0 +1,89 @@
+{
+  "timestamp": "2026-08-31T16:19:06.457942",
+  "results": [
+    {
+      "item": "CPU",
+      "status": "正常",
+      "value": 12.3,
+      "message": "CPU使用率に問題は見られません。",
+      "causes": [],
+      "recommendations": []
+    },
+    {
+      "item": "メモリ",
+      "status": "正常",
+      "value": 46.7,
+      "message": "メモリ使用率に大きな問題は見られません。",
+      "causes": [],
+      "recommendations": []
+    },
+    {
+      "item": "ディスク",
+      "status": "正常",
+      "value": 28.2,
+      "message": "ディスク容量に問題は見られません。",
+      "causes": [],
+      "recommendations": []
+    },
+    {
+      "item": "CPU温度",
+      "status": "正常",
+      "value": 50.0,
+      "message": "CPU温度に問題は見られません。",
+      "causes": [],
+      "recommendations": []
+    },
+    {
+      "item": "GPU温度",
+      "status": "正常",
+      "value": 47.0,
+      "message": "GPU温度に問題は見られません。",
+      "causes": [],
+      "recommendations": []
+    },
+    {
+      "item": "ストレージSMART",
+      "status": "正常",
+      "value": 1.0,
+      "message": "NVMe SSDの健康状態に問題は見られません。",
+      "causes": [],
+      "recommendations": []
+    },
+    {
+      "item": "Windowsイベントログ",
+      "status": "注意",
+      "value": 20,
+      "message": "Windowsイベントログに警告が検出されています。",
+      "causes": [
+        "Windowsイベントログで20件の警告が検出されました",
+        "重要度「中」のイベントが9件検出されました",
+        "重要度「低」のイベントが11件検出されました",
+        "[重要度:低] DistributedCOMのアクセス許可に関する警告が発生しています（9件）",
+        "[重要度:低] Microsoft Edgeの認証処理に関する警告が発生しています（2件）",
+        "[重要度:中] Intel無線LANドライバー関連の警告が発生しています（1件）",
+        "[重要度:中] Microsoft-Windows-Kernel-PnP (Event ID: 219)（1件）",
+        "[重要度:中] Microsoft-Windows-Hyper-V-Hypervisor (Event ID: 167)（1件）",
+        "[重要度:中] Microsoft-Windows-WLAN-AutoConfig (Event ID: 10002)（1件）",
+        "[重要度:中] Microsoft-Windows-System-Restore (Event ID: 8303)（4件）",
+        "[重要度:中] TCP/IPで利用可能なUDPポートが不足しています（1件）"
+      ],
+      "recommendations": [
+        "警告が継続的に発生している場合は原因を確認してください"
+      ]
+    }
+  ],
+  "ai_analysis": {
+    "summary": "CPUやメモリ、ストレージなどの基本的なハードウェアの状態は正常ですが、Windowsイベントログに複数の警告が大量に検出されています。これは、いくつかのシステムコンポーネントやドライバが通常とは異なる挙動をしている可能性を示しており、システム全体での監視と対応が必要です。",
+    "priority": "注意",
+    "causes": [
+      "複数のソフトウェアコンポーネント（例：Microsoft Edge、無線LAN関連）で、アクセス許可や認証処理に関する警告が軽度ながら発生している可能性があります。",
+      "システムの中核機能（PnP、WLAN、システム復元、ネットワークポートなど）において、一時的または継続的なリソースの利用に関する警告が発生している可能性があります。",
+      "検出された警告は、ソフトウェアやドライバーが最新でない、またはシステムの設定が最適化されていないことが原因である可能性があります。"
+    ],
+    "recommendations": [
+      "警告が継続的に発生している場合、警告メッセージの詳細（イベントIDや関連コンポーネント名）を特定し、インターネット上の信頼できる情報源やメーカーのサポート窓口で検索してください。",
+      "使用している無線LANアダプタやその他のデバイスのドライバを、メーカーの公式サイトから最新版に更新してください。",
+      "Windows Updateを実行し、OSや関連コンポーネントに保留されている重要なアップデートがないか確認してください。"
+    ]
+  }
+}

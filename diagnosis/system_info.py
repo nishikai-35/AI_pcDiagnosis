@@ -37,13 +37,35 @@ def get_hardware_data():
     LibreHardwareMonitorからハードウェア情報を取得する
     """
 
+    # LibreHardwareMonitorを自動起動
+    from diagnosis.hardware_monitor import start_libre_hardware_monitor
+
+    ready = start_libre_hardware_monitor()
+
+    if not ready:
+        print(
+            "LibreHardwareMonitorの準備が完了していないため、"
+            "ハードウェア情報を取得できません。"
+        )
+        return None
+
     try:
-        with urlopen(LIBRE_HARDWARE_MONITOR_URL, timeout=5) as response:
+        with urlopen(
+            LIBRE_HARDWARE_MONITOR_URL,
+            timeout=5,
+        ) as response:
+
             return json.load(response)
 
     except Exception as e:
-        print(f"LibreHardwareMonitorへの接続に失敗しました: {e}")
+
+        print(
+            f"LibreHardwareMonitorへの接続に失敗しました: {e}"
+        )
+
         return None
+
+
 
 
 def find_sensor(node, sensor_text: str, sensor_type: str):

@@ -1,8 +1,10 @@
 import re
 import subprocess
 
+from diagnosis.path_utils import SMARTCTL_EXE
 
-SMARTCTL_PATH = "smartctl"
+
+SMARTCTL_PATH = SMARTCTL_EXE
 NVME_DEVICE = "/dev/sda"
 
 

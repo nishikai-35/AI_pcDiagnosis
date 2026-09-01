@@ -1,0 +1,89 @@
+{
+  "timestamp": "2026-08-31T17:15:53.543355",
+  "results": [
+    {
+      "item": "CPU",
+      "status": "正常",
+      "value": 8.3,
+      "message": "CPU使用率に問題は見られません。",
+      "causes": [],
+      "recommendations": []
+    },
+    {
+      "item": "メモリ",
+      "status": "正常",
+      "value": 40.2,
+      "message": "メモリ使用率に大きな問題は見られません。",
+      "causes": [],
+      "recommendations": []
+    },
+    {
+      "item": "ディスク",
+      "status": "正常",
+      "value": 28.2,
+      "message": "ディスク容量に問題は見られません。",
+      "causes": [],
+      "recommendations": []
+    },
+    {
+      "item": "CPU温度",
+      "status": "正常",
+      "value": 44.0,
+      "message": "CPU温度に問題は見られません。",
+      "causes": [],
+      "recommendations": []
+    },
+    {
+      "item": "GPU温度",
+      "status": "正常",
+      "value": 43.0,
+      "message": "GPU温度に問題は見られません。",
+      "causes": [],
+      "recommendations": []
+    },
+    {
+      "item": "ストレージSMART",
+      "status": "正常",
+      "value": 1.0,
+      "message": "NVMe SSDの健康状態に問題は見られません。",
+      "causes": [],
+      "recommendations": []
+    },
+    {
+      "item": "Windowsイベントログ",
+      "status": "注意",
+      "value": 20,
+      "message": "Windowsイベントログに警告が検出されています。",
+      "causes": [
+        "Windowsイベントログで20件の警告が検出されました",
+        "重要度「中」のイベントが9件検出されました",
+        "重要度「低」のイベントが11件検出されました",
+        "[重要度:低] DistributedCOMのアクセス許可に関する警告が発生しています（9件）",
+        "[重要度:低] Microsoft Edgeの認証処理に関する警告が発生しています（2件）",
+        "[重要度:中] Intel無線LANドライバー関連の警告が発生しています（1件）",
+        "[重要度:中] Microsoft-Windows-Kernel-PnP (Event ID: 219)（1件）",
+        "[重要度:中] Microsoft-Windows-Hyper-V-Hypervisor (Event ID: 167)（1件）",
+        "[重要度:中] Microsoft-Windows-WLAN-AutoConfig (Event ID: 10002)（1件）",
+        "[重要度:中] Microsoft-Windows-System-Restore (Event ID: 8303)（4件）",
+        "[重要度:中] TCP/IPで利用可能なUDPポートが不足しています（1件）"
+      ],
+      "recommendations": [
+        "警告が継続的に発生している場合は原因を確認してください"
+      ]
+    }
+  ],
+  "ai_analysis": {
+    "summary": "主要なハードウェアコンポーネント（CPU、メモリ、ストレージなど）には大きな問題は認められません。しかし、Windowsイベントログ上に広範囲にわたる警告（20件）が検出されています。これらは、アクセス許可の不足、ドライバの互換性、またはシステムサービスの一時的な動作に関する軽微な警告が多岐にわたることを示しています。",
+    "priority": "注意",
+    "causes": [
+      "複数のシステムサービス（DistributedCOM、WLAN、PnPなど）におけるアクセス権限の設定上の不整合や、軽微な動作警告が発生している可能性。",
+      "利用している周辺機器やドライバ、OSのバージョンが最新でないことによる互換性問題や、システムの更新サイクルに伴う一時的な警告である可能性。",
+      "ネットワークやシステム修復機能（System Restore、Hyper-Vなど）が正常に動作しているものの、ログ上での利用可能なリソース（UDPポートなど）の警告が出ている可能性。"
+    ],
+    "recommendations": [
+      "警告の発生内容（例：DistributedCOM、Intel無線LANなど）を特定し、具体的な原因について再度Windowsイベントビューアなどで詳細なログ調査を実施してください。",
+      "使用しているPCのOSおよび、無線LANアダプターやその他の主要ドライバ（チップセットなど）を最新の状態に更新してください。",
+      "これらの警告が一度限りのものか、継続的に発生しているか経過観察を行ってください。警告が継続する場合は、メーカーや専門家への相談を推奨します。"
+    ]
+  }
+}

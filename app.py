@@ -288,4 +288,8 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    # 通常実行
+    #
+    # 定期診断は diagnosis.scheduler.diagnosis_scheduler
+    # から直接起動する。
     main(scheduled=args.scheduled)
