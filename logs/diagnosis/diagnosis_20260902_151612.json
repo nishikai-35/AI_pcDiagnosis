@@ -1,0 +1,76 @@
+{
+  "timestamp": "2026-09-02T15:16:12.845445",
+  "results": [
+    {
+      "item": "CPU",
+      "status": "正常",
+      "value": 12.5,
+      "message": "CPU使用率に問題は見られません。",
+      "causes": [],
+      "recommendations": []
+    },
+    {
+      "item": "メモリ",
+      "status": "正常",
+      "value": 48.2,
+      "message": "メモリ使用率に大きな問題は見られません。",
+      "causes": [],
+      "recommendations": []
+    },
+    {
+      "item": "ディスク",
+      "status": "正常",
+      "value": 27.7,
+      "message": "ディスク容量に問題は見られません。",
+      "causes": [],
+      "recommendations": []
+    },
+    {
+      "item": "CPU温度",
+      "status": "正常",
+      "value": 45.0,
+      "message": "CPU温度に問題は見られません。",
+      "causes": [],
+      "recommendations": []
+    },
+    {
+      "item": "GPU温度",
+      "status": "正常",
+      "value": 45.0,
+      "message": "GPU温度に問題は見られません。",
+      "causes": [],
+      "recommendations": []
+    },
+    {
+      "item": "ストレージSMART",
+      "status": "正常",
+      "value": 1.0,
+      "message": "NVMe SSDの健康状態に問題は見られません。",
+      "causes": [],
+      "recommendations": []
+    },
+    {
+      "item": "Windowsイベントログ",
+      "status": "警告",
+      "value": 18,
+      "message": "Windowsイベントログにエラーが検出されています。",
+      "causes": [
+        "Windowsイベントログで10件のエラーが検出されました",
+        "Windowsイベントログで8件の警告が検出されました",
+        "重要度「中」のイベントが13件検出されました",
+        "重要度「低」のイベントが5件検出されました",
+        "[重要度:中] .NET Runtime (Event ID: 1022)（10件）",
+        "[重要度:中] Microsoft-Windows-System-Restore (Event ID: 8303)（1件）",
+        "[重要度:低] DistributedCOMのアクセス許可に関する警告が発生しています（3件）",
+        "[重要度:低] Microsoft Edgeの認証処理に関する警告が発生しています（2件）",
+        "[重要度:中] Intel無線LANドライバー関連の警告が発生しています（1件）",
+        "[重要度:中] Windows終了時にアプリケーションの終了処理が遅延しています（1件）"
+      ],
+      "recommendations": [
+        "Windowsイベントログのエラー内容を確認してください",
+        "同じエラーが繰り返し発生していないか確認してください",
+        "警告が継続的に発生している場合は原因を確認してください"
+      ]
+    }
+  ]
+}

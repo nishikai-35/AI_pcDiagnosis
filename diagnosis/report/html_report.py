@@ -2,9 +2,15 @@ from datetime import datetime, timedelta
 from html import escape
 from pathlib import Path
 
+from diagnosis.config import get_int
+from diagnosis.path_utils import REPORTS_DIR
 
-# HTMLレポートの保存期間（日）
-HTML_RETENTION_DAYS = 5
+
+# HTMLレポートの保存期間（時間）
+HTML_RETENTION_HOURS = get_int(
+    "retention",
+    "html_hours"
+)
 
 
 def get_status_class(status):
@@ -19,7 +25,7 @@ def cleanup_old_html_files(output_dir):
     """
     保存期間を超えたHTMLレポートを削除する。
 
-    作成から120時間（5日）を超えたHTMLレポートを
+    作成から{HTML_RETENTION_HOURS}時間を超えたHTMLレポートを
     削除する。
     """
 
@@ -27,7 +33,7 @@ def cleanup_old_html_files(output_dir):
         return
 
     cutoff_time = datetime.now() - timedelta(
-        days=HTML_RETENTION_DAYS
+        hours=HTML_RETENTION_HOURS
     )
 
     html_files = output_dir.glob(
@@ -65,7 +71,7 @@ def cleanup_old_html_files(output_dir):
 def export_html(
     diagnosis,
     ai_analysis=None,
-    output_dir="reports",
+    output_dir=REPORTS_DIR,
 ):
     """
     診断結果をHTMLファイルとして出力する。

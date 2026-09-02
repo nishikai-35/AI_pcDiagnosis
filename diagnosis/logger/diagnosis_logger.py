@@ -1,12 +1,12 @@
 import json
 from datetime import datetime, timedelta
-from pathlib import Path
+from diagnosis.path_utils import LOGS_DIR
 from dataclasses import asdict
 
 from diagnosis.config import get_int
 
 
-LOG_DIR = Path("logs/diagnosis")
+LOG_DIR = LOGS_DIR / "diagnosis"
 
 # JSONログの保存期間（時間）
 JSON_RETENTION_HOURS = get_int(

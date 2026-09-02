@@ -8,6 +8,7 @@ from diagnosis.report.html_report import export_html
 from diagnosis.event_log import get_windows_event_logs
 from diagnosis.logger.diagnosis_logger import save_diagnosis_log
 from diagnosis.ai.ai_analyzer import analyze_with_ai
+from diagnosis.path_utils import REPORTS_DIR
 
 from diagnosis.process_monitor import (
     get_top_memory_processes,
@@ -295,7 +296,7 @@ def main(scheduled=False, ai_enabled=True):
         html_path = export_html(
             diagnosis,
             ai_analysis,
-            "reports",
+            REPORTS_DIR,
         )
 
         print()
