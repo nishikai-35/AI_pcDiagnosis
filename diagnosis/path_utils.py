@@ -26,6 +26,8 @@ REPORTS_DIR = APP_DIR / "reports"
 
 LOGS_DIR = APP_DIR / "logs"
 
+CONFIG_FILE = APP_DIR / "config.ini"
+
 LHM_DIR = TOOLS_DIR / "LibreHardwareMonitor"
 
 LHM_EXE = LHM_DIR / "LibreHardwareMonitor.exe"

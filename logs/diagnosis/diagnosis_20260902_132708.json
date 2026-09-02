@@ -1,18 +1,25 @@
 {
-  "timestamp": "2026-09-02T10:01:50.686337",
+  "timestamp": "2026-09-02T13:27:08.820201",
   "results": [
     {
       "item": "CPU",
-      "status": "正常",
-      "value": 10.9,
-      "message": "CPU使用率に問題は見られません。",
-      "causes": [],
-      "recommendations": []
+      "status": "注意",
+      "value": 8.5,
+      "message": "CPU使用率が高めです。",
+      "causes": [
+        "アプリケーションによる一時的なCPU負荷の可能性があります",
+        "バックグラウンドで処理が実行されている可能性があります",
+        "python.exe が約22.6%のCPUを使用しています"
+      ],
+      "recommendations": [
+        "使用していないアプリケーションを終了してください",
+        "タスクマネージャーでCPU使用率を確認してください"
+      ]
     },
     {
       "item": "メモリ",
       "status": "正常",
-      "value": 46.8,
+      "value": 49.0,
       "message": "メモリ使用率に大きな問題は見られません。",
       "causes": [],
       "recommendations": []
@@ -20,7 +27,7 @@
     {
       "item": "ディスク",
       "status": "正常",
-      "value": 27.2,
+      "value": 27.5,
       "message": "ディスク容量に問題は見られません。",
       "causes": [],
       "recommendations": []
@@ -28,7 +35,7 @@
     {
       "item": "CPU温度",
       "status": "正常",
-      "value": 44.0,
+      "value": 45.0,
       "message": "CPU温度に問題は見られません。",
       "causes": [],
       "recommendations": []
@@ -36,7 +43,7 @@
     {
       "item": "GPU温度",
       "status": "正常",
-      "value": 43.0,
+      "value": 41.0,
       "message": "GPU温度に問題は見られません。",
       "causes": [],
       "recommendations": []
@@ -55,15 +62,16 @@
       "value": 20,
       "message": "Windowsイベントログにエラーが検出されています。",
       "causes": [
-        "Windowsイベントログで13件のエラーが検出されました",
-        "Windowsイベントログで7件の警告が検出されました",
+        "Windowsイベントログで12件のエラーが検出されました",
+        "Windowsイベントログで8件の警告が検出されました",
         "重要度「中」のイベントが15件検出されました",
         "重要度「低」のイベントが5件検出されました",
+        "[重要度:中] .NET Runtime (Event ID: 1022)（12件）",
+        "[重要度:中] Microsoft-Windows-System-Restore (Event ID: 8303)（1件）",
         "[重要度:低] DistributedCOMのアクセス許可に関する警告が発生しています（3件）",
         "[重要度:低] Microsoft Edgeの認証処理に関する警告が発生しています（2件）",
         "[重要度:中] Intel無線LANドライバー関連の警告が発生しています（1件）",
-        "[重要度:中] Windows終了時にアプリケーションの終了処理が遅延しています（1件）",
-        "[重要度:中] .NET Runtime (Event ID: 1022)（13件）"
+        "[重要度:中] Windows終了時にアプリケーションの終了処理が遅延しています（1件）"
       ],
       "recommendations": [
         "Windowsイベントログのエラー内容を確認してください",

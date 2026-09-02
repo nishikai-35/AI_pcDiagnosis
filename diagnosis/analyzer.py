@@ -1,5 +1,33 @@
 from dataclasses import dataclass
+
 from diagnosis.event_analyzer import analyze_event_logs
+from diagnosis.config import get_int
+
+
+# ==========================================================
+# 診断閾値
+# config.iniから読み込む
+# ==========================================================
+
+CPU_CAUTION = get_int("diagnosis", "cpu_caution")
+CPU_WARNING = get_int("diagnosis", "cpu_warning")
+
+MEMORY_CAUTION = get_int("diagnosis", "memory_caution")
+MEMORY_WARNING = get_int("diagnosis", "memory_warning")
+
+DISK_CAUTION = get_int("diagnosis", "disk_caution")
+DISK_WARNING = get_int("diagnosis", "disk_warning")
+
+CPU_TEMPERATURE_CAUTION = get_int(
+    "diagnosis",
+    "cpu_temperature_caution",
+)
+
+CPU_TEMPERATURE_WARNING = get_int(
+    "diagnosis",
+    "cpu_temperature_warning",
+)
+
 
 @dataclass
 class DiagnosisResult:
@@ -68,7 +96,7 @@ def analyze_cpu(
 
     process_causes = get_cpu_process_causes(processes)
 
-    if usage >= 95:
+    if usage >= CPU_WARNING:
         causes = [
             "CPU負荷の高いアプリケーションが実行されている可能性があります",
             "バックグラウンド処理がCPUを大量に使用している可能性があります",
@@ -90,7 +118,7 @@ def analyze_cpu(
             ],
         )
 
-    if usage >= 80:
+    if usage >= CPU_CAUTION:
         causes = [
             "アプリケーションによる一時的なCPU負荷の可能性があります",
             "バックグラウンドで処理が実行されている可能性があります",
@@ -127,7 +155,7 @@ def analyze_memory(usage: float, processes=None) -> DiagnosisResult:
         
     process_causes = get_memory_process_causes(processes)
     
-    if usage >= 90:
+    if usage >= MEMORY_WARNING:
         causes = [
             "多数のアプリケーションが同時に実行されている可能性があります",
             "ブラウザや常駐アプリケーションが大量のメモリを使用している可能性があります",
@@ -151,7 +179,7 @@ def analyze_memory(usage: float, processes=None) -> DiagnosisResult:
             ],
         )
 
-    if usage >= 80:
+    if usage >= MEMORY_CAUTION:
         causes = [
             "複数のアプリケーションが同時にメモリを使用している可能性があります",
             "ブラウザのタブや常駐アプリケーションがメモリを消費している可能性があります",
@@ -184,7 +212,7 @@ def analyze_memory(usage: float, processes=None) -> DiagnosisResult:
 
 
 def analyze_disk(usage: float) -> DiagnosisResult:
-    if usage >= 90:
+    if usage >= DISK_WARNING:
         return DiagnosisResult(
             item="ディスク",
             status="警告",
@@ -203,7 +231,7 @@ def analyze_disk(usage: float) -> DiagnosisResult:
             ],
         )
 
-    if usage >= 80:
+    if usage >= DISK_CAUTION:
         return DiagnosisResult(
             item="ディスク",
             status="注意",
@@ -235,7 +263,7 @@ def analyze_cpu_temperature(temperature: float) -> DiagnosisResult:
     CPU温度を診断する
     """
 
-    if temperature >= 90:
+    if temperature >= CPU_TEMPERATURE_WARNING:
         return DiagnosisResult(
             item="CPU温度",
             status="警告",
@@ -255,7 +283,7 @@ def analyze_cpu_temperature(temperature: float) -> DiagnosisResult:
             ],
         )
 
-    if temperature >= 80:
+    if temperature >= CPU_TEMPERATURE_CAUTION:
         return DiagnosisResult(
             item="CPU温度",
             status="注意",

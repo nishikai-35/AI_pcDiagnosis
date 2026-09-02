@@ -1,10 +1,11 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from html import escape
 from pathlib import Path
 
 
-# HTMLの最大保存数
-MAX_HTML_FILES = 10
+# HTMLレポートの保存期間（日）
+HTML_RETENTION_DAYS = 5
+
 
 def get_status_class(status):
     return {
@@ -13,33 +14,52 @@ def get_status_class(status):
         "警告": "warning",
     }.get(status, "normal")
 
+
 def cleanup_old_html_files(output_dir):
     """
-    HTMLレポートが最大保存数を超えた場合、
-    古いファイルから削除する。
+    保存期間を超えたHTMLレポートを削除する。
+
+    作成から120時間（5日）を超えたHTMLレポートを
+    削除する。
     """
 
-    html_files = sorted(
-        output_dir.glob("diagnosis_report_*.html"),
-        key=lambda path: path.stat().st_mtime,
+    if not output_dir.exists():
+        return
+
+    cutoff_time = datetime.now() - timedelta(
+        days=HTML_RETENTION_DAYS
     )
 
-    while len(html_files) > MAX_HTML_FILES:
-        oldest_file = html_files.pop(0)
+    html_files = output_dir.glob(
+        "diagnosis_report_*.html"
+    )
+
+    for html_file in html_files:
 
         try:
-            oldest_file.unlink()
-            print(
-                f"古いHTMLレポートを削除しました: "
-                f"{oldest_file}"
+            file_time = datetime.fromtimestamp(
+                html_file.stat().st_mtime
             )
 
+            if file_time < cutoff_time:
+
+                html_file.unlink()
+
+                print(
+                    f"保存期間を超えたHTMLレポートを削除しました: "
+                    f"{html_file}"
+                )
+
         except OSError as e:
+
             print(
                 f"HTMLレポートの削除に失敗しました: "
-                f"{oldest_file}"
+                f"{html_file}"
             )
-            print(f"エラー: {e}")
+
+            print(
+                f"エラー: {e}"
+            )
 
 
 def export_html(
