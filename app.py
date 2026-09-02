@@ -149,7 +149,7 @@ def print_top_cpu_processes(processes):
         )
 
 
-def run_diagnosis_process():
+def run_diagnosis_process(ai_enabled=True):
     """
     PC情報を取得して診断を実行し、
     診断結果とAI分析結果をJSONログとして保存する。
@@ -188,7 +188,10 @@ def run_diagnosis_process():
     diagnosis = run_diagnosis(results)
 
     # AI分析
-    ai_analysis = analyze_with_ai(diagnosis)
+    if ai_enabled:
+        ai_analysis = analyze_with_ai(diagnosis)
+    else:
+        ai_analysis = None
 
     # JSONログ保存
     log_path = save_diagnosis_log(
@@ -206,7 +209,7 @@ def run_diagnosis_process():
     )
 
 
-def main(scheduled=False):
+def main(scheduled=False, ai_enabled=True):
 
     (
         info,
@@ -215,41 +218,78 @@ def main(scheduled=False):
         diagnosis,
         ai_analysis,
         log_path,
-    ) = run_diagnosis_process()
-    
-    print() 
-    print("=" * 60)
-    print("                 AI分析結果")
-    print("=" * 60)
-    
-    print(f"\n概要:")
-    print(f"  {ai_analysis.summary}")
-    
-    print(f"\n優先度:")
-    print(f"  {ai_analysis.priority}")
-    
-    if ai_analysis.causes:
-        print("\nAI分析による原因:")
-        for cause in ai_analysis.causes:
-            print(f"  - {cause}")
-    
-    if ai_analysis.recommendations:
-        print("\nAI分析による推奨対策:")
-        for recommendation in ai_analysis.recommendations:
-            print(f"  - {recommendation}")
-    
-    print("=" * 60)
+    ) = run_diagnosis_process(
+        ai_enabled=ai_enabled
+    )
 
+    # ============================================================
+    # AI分析結果
+    # ============================================================
+
+    if ai_analysis is not None:
+
+        print()
+        print("=" * 60)
+        print("                 AI分析結果")
+        print("=" * 60)
+
+        print("\n概要:")
+        print(f"  {ai_analysis.summary}")
+
+        print("\n優先度:")
+        print(f"  {ai_analysis.priority}")
+
+        if ai_analysis.causes:
+            print("\nAI分析による原因:")
+
+            for cause in ai_analysis.causes:
+                print(f"  - {cause}")
+
+        if ai_analysis.recommendations:
+            print("\nAI分析による推奨対策:")
+
+            for recommendation in ai_analysis.recommendations:
+                print(f"  - {recommendation}")
+
+        print("=" * 60)
+
+    else:
+
+        print()
+        print("=" * 60)
+        print("                 AI分析")
+        print("=" * 60)
+        print("AI分析：無効")
+        print("=" * 60)
+
+    # ============================================================
     # 手動実行時は詳細情報を表示
+    # ============================================================
+
     if not scheduled:
+
         print_system_info(info)
-        print_top_memory_processes(memory_processes)
-        print_top_cpu_processes(cpu_processes)
 
+        print_top_memory_processes(
+            memory_processes
+        )
+
+        print_top_cpu_processes(
+            cpu_processes
+        )
+
+    # ============================================================
     # 診断結果を表示
-    print_diagnosis(diagnosis)
+    # ============================================================
 
+    print_diagnosis(
+        diagnosis
+    )
+
+    # ============================================================
     # 手動実行時のみHTMLを出力
+    # ============================================================
+
     if not scheduled:
 
         html_path = export_html(
@@ -262,8 +302,10 @@ def main(scheduled=False):
         print("=" * 60)
         print("レポート出力完了")
         print("=" * 60)
+
         print(f"JSON: {log_path}")
         print(f"HTML: {html_path}")
+
         print("=" * 60)
 
     else:
@@ -272,8 +314,11 @@ def main(scheduled=False):
         print("=" * 60)
         print("定期診断完了")
         print("=" * 60)
+
         print(f"JSON: {log_path}")
+
         print("=" * 60)
+
 
 
 if __name__ == "__main__":
@@ -286,10 +331,16 @@ if __name__ == "__main__":
         help="定期診断モードで実行する",
     )
 
+    parser.add_argument(
+        "--no-ai",
+        action="store_true",
+        help="AI分析を無効にする",
+    )
+
     args = parser.parse_args()
 
-    # 通常実行
-    #
-    # 定期診断は diagnosis.scheduler.diagnosis_scheduler
-    # から直接起動する。
-    main(scheduled=args.scheduled)
+    main(
+        scheduled=args.scheduled,
+        ai_enabled=not args.no_ai,
+    )
+

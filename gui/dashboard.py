@@ -116,6 +116,42 @@ class Dashboard:
         # 操作エリア
         # --------------------------------------------------
 
+        ai_frame = ttk.LabelFrame(
+            main_frame,
+            text="AI分析"
+        )
+
+        ai_frame.pack(
+            fill="x",
+            padx=10,
+            pady=10
+        )
+
+        self.ai_enabled = tk.BooleanVar(value=True)
+
+        ttk.Radiobutton(
+            ai_frame,
+            text="ON",
+            variable=self.ai_enabled,
+            value=True
+        ).pack(
+            side="left",
+            padx=10,
+            pady=5
+        )
+
+        ttk.Radiobutton(
+            ai_frame,
+            text="OFF",
+            variable=self.ai_enabled,
+            value=False
+        ).pack(
+            side="left",
+            padx=10,
+            pady=5
+        )
+
+
         control_frame = ttk.Frame(
             main_frame,
         )
@@ -128,7 +164,7 @@ class Dashboard:
         self.diagnosis_button = ttk.Button(
             control_frame,
             text="今すぐ診断",
-            command=self.on_diagnosis,
+            command=self.start_diagnosis,
             width=20,
         )
 
@@ -387,73 +423,94 @@ class Dashboard:
     # ======================================================
     # 診断開始表示
     # ======================================================
-
+    
     def diagnosis_started(self):
-
+    
         self.diagnosis_button.config(
             state="disabled",
         )
-
+    
         # 診断中はHTMLボタンを無効化
         self.html_button.config(
             state="disabled",
         )
-
+    
         # 古いHTMLパスをクリア
         self.html_path = None
-
+    
         self.status_label.config(
             text="診断中...",
         )
-
+    
         self.overall_badge.set_status(
             "診断中"
         )
-
+    
         self.progress.start(10)
-
-        self.ai_panel.set_text(
-            "AI分析を実行しています...\n"
-            "しばらくお待ちください。"
-        )
-
+    
+        # AI設定に応じて表示を変更
+        if self.ai_enabled.get():
+            self.ai_panel.set_text(
+                "AI分析を実行しています...\n"
+                "しばらくお待ちください。"
+            )
+        else:
+            self.ai_panel.set_text(
+                "AI分析：無効\n"
+                "基本診断のみ実行しています。"
+            )
+    
         self.summary_panel.set_text(
             "診断を実行しています..."
         )
+    
+    
+    def start_diagnosis(self, ai_enabled=None):
+        """GUIのAI設定を取得して診断処理へ渡す"""
+    
+        if ai_enabled is None:
+            ai_enabled = self.ai_enabled.get()
+    
+        print(
+            f"GUI設定：AI分析 "
+            f"{'ON' if ai_enabled else 'OFF'}"
+        )
+    
+        self.on_diagnosis(ai_enabled)
 
     # ======================================================
     # 診断完了
     # ======================================================
-
+    
     def show_diagnosis(
         self,
         info,
         diagnosis,
         ai_analysis,
     ):
-
+    
         self.progress.stop()
-
+    
         self.diagnosis_button.config(
             state="normal",
         )
-
+    
         self.status_label.config(
             text=f"診断完了：{diagnosis.status}",
         )
-
+    
         # --------------------------------------------------
         # 総合ステータス
         # --------------------------------------------------
-
+    
         self.overall_badge.set_status(
             diagnosis.status
         )
-
+    
         # --------------------------------------------------
         # CPU
         # --------------------------------------------------
-
+    
         self.cpu_card.update_value(
             info["cpu_usage"],
             self.find_result_status(
@@ -461,11 +518,11 @@ class Dashboard:
                 "CPU",
             ),
         )
-
+    
         # --------------------------------------------------
         # メモリ
         # --------------------------------------------------
-
+    
         self.memory_card.update_value(
             info["memory_usage"],
             self.find_result_status(
@@ -473,11 +530,11 @@ class Dashboard:
                 "メモリ",
             ),
         )
-
+    
         # --------------------------------------------------
         # ディスク
         # --------------------------------------------------
-
+    
         self.disk_card.update_value(
             info["disk_usage"],
             self.find_result_status(
@@ -485,11 +542,11 @@ class Dashboard:
                 "ディスク",
             ),
         )
-
+    
         # --------------------------------------------------
         # CPU温度
         # --------------------------------------------------
-
+    
         self.cpu_temp_card.update_value(
             info["cpu_temperature"],
             self.find_result_status(
@@ -498,11 +555,11 @@ class Dashboard:
             ),
             "°C",
         )
-
+    
         # --------------------------------------------------
         # GPU温度
         # --------------------------------------------------
-
+    
         self.gpu_temp_card.update_value(
             info["gpu_temperature"],
             self.find_result_status(
@@ -511,119 +568,134 @@ class Dashboard:
             ),
             "°C",
         )
-
+    
         # --------------------------------------------------
         # SMART
         # --------------------------------------------------
-
+    
         smart_status = self.find_result_status(
             diagnosis,
             "ストレージSMART",
         )
-
+    
         self.smart_card.update_status(
             smart_status,
             "NVMe SSDの健康状態",
         )
-
+    
         # --------------------------------------------------
         # AI分析
         # --------------------------------------------------
-
-        ai_text = ""
-
-        ai_text += "概要\n"
-        ai_text += "────────────────────\n"
-        ai_text += (
-            f"{ai_analysis.summary}\n\n"
-        )
-
-        ai_text += "優先度\n"
-        ai_text += "────────────────────\n"
-        ai_text += (
-            f"{ai_analysis.priority}\n\n"
-        )
-
-        if ai_analysis.causes:
-
-            ai_text += "AI分析による原因\n"
+    
+        if ai_analysis is None:
+        
+            # AI OFFの場合
+            ai_text = ""
+    
+            ai_text += "AI分析：無効\n"
             ai_text += "────────────────────\n"
-
-            for cause in ai_analysis.causes:
-
-                ai_text += (
-                    f"・{cause}\n"
-                )
-
-            ai_text += "\n"
-
-        if ai_analysis.recommendations:
-
-            ai_text += "AI分析による推奨対策\n"
+            ai_text += (
+                "AI分析は実行されていません。\n"
+                "基本診断のみ実行しました。"
+            )
+    
+        else:
+        
+            # AI ONの場合
+            ai_text = ""
+    
+            ai_text += "概要\n"
             ai_text += "────────────────────\n"
-
-            for recommendation in (
-                ai_analysis.recommendations
-            ):
-
-                ai_text += (
-                    f"・{recommendation}\n"
-                )
-
+            ai_text += (
+                f"{ai_analysis.summary}\n\n"
+            )
+    
+            ai_text += "優先度\n"
+            ai_text += "────────────────────\n"
+            ai_text += (
+                f"{ai_analysis.priority}\n\n"
+            )
+    
+            if ai_analysis.causes:
+            
+                ai_text += "AI分析による原因\n"
+                ai_text += "────────────────────\n"
+    
+                for cause in ai_analysis.causes:
+                
+                    ai_text += (
+                        f"・{cause}\n"
+                    )
+    
+                ai_text += "\n"
+    
+            if ai_analysis.recommendations:
+            
+                ai_text += "AI分析による推奨対策\n"
+                ai_text += "────────────────────\n"
+    
+                for recommendation in (
+                    ai_analysis.recommendations
+                ):
+    
+                    ai_text += (
+                        f"・{recommendation}\n"
+                    )
+    
         self.ai_panel.set_text(
             ai_text
         )
-
+    
         # --------------------------------------------------
         # 最終診断
         # --------------------------------------------------
-
+    
         summary_text = ""
-
+    
         summary_text += (
             f"総合評価：{diagnosis.status}\n\n"
         )
-
+    
         summary_text += (
             f"{diagnosis.message}\n\n"
         )
-
+    
         if diagnosis.causes:
-
+        
             summary_text += "主な原因\n"
             summary_text += "────────────────────\n"
-
+    
             for cause in diagnosis.causes:
-
+            
                 summary_text += (
                     f"・{cause}\n"
                 )
-
+    
             summary_text += "\n"
-
+    
         if diagnosis.recommendations:
-
+        
             summary_text += "推奨対策\n"
             summary_text += "────────────────────\n"
-
+    
             for index, recommendation in enumerate(
                 diagnosis.recommendations,
                 start=1,
             ):
-
+    
                 summary_text += (
                     f"{index}. "
                     f"{recommendation}\n"
                 )
-
+    
         self.summary_panel.set_text(
             summary_text
         )
-
+    
         # --------------------------------------------------
         # HTMLレポート生成
         # --------------------------------------------------
-
+    
         self.generate_html_report(
             diagnosis,
             ai_analysis,

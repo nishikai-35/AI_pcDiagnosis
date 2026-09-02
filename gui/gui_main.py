@@ -37,18 +37,32 @@ class AIPCDiagnosisApp:
     # 診断開始
     # ======================================================
 
-    def start_diagnosis(self):
+    def start_diagnosis(self, ai_enabled=None):
+        """診断を開始する"""
 
         if self.diagnosis_running:
-
             return
 
         self.diagnosis_running = True
+
+        # Dashboard側のAI分析設定を取得
+        if ai_enabled is None:
+            ai_enabled = getattr(
+                self.dashboard,
+            "ai_enabled",
+            True,
+        )
+
+        print(
+            f"診断開始：AI分析 "
+            f"{'ON' if ai_enabled else 'OFF'}"
+        )
 
         self.dashboard.diagnosis_started()
 
         thread = threading.Thread(
             target=self.run_diagnosis,
+            args=(ai_enabled,),
             daemon=True,
         )
 
@@ -58,7 +72,7 @@ class AIPCDiagnosisApp:
     # バックグラウンド診断
     # ======================================================
 
-    def run_diagnosis(self):
+    def run_diagnosis(self, ai_enabled=True):
 
         try:
 
@@ -69,7 +83,9 @@ class AIPCDiagnosisApp:
                 diagnosis,
                 ai_analysis,
                 log_path,
-            ) = run_diagnosis_process()
+            ) = run_diagnosis_process(
+                ai_enabled=ai_enabled
+            )
 
             self.root.after(
                 0,
@@ -142,7 +158,6 @@ class AIPCDiagnosisApp:
             )
 
             if not result:
-
                 return
 
         self.root.destroy()
